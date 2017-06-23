@@ -4,3 +4,4 @@
 // --------------------
 
 //$rcmail_config['sendcharset'] = 'ISO-2022-JP';
+//$rcmail_config['use_base64'] = true;

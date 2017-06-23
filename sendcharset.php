@@ -12,6 +12,7 @@ class sendcharset extends rcube_plugin
     $this->add_hook('preferences_list', array($this, 'show_option'));
     $this->add_hook('preferences_save', array($this, 'save'));
     $this->add_hook('template_object_composebody', array($this, 'append'));
+    $this->add_hook('message_ready', array($this, 'tweak_encoding'));
   }
 
   /**
@@ -57,6 +58,37 @@ class sendcharset extends rcube_plugin
     $input = new html_inputfield(array('type'=>'hidden', 'name'=>'_charset'));
     $attrib['content'] .= "\n".$input->show($this->get_charset());
     return $attrib;
+  }
+
+  /**
+   * hack the encodings of the message before sending it
+   */
+  function tweak_encoding($params)
+  {
+    global $RCMAIL, $OUTPUT;
+    $config = $RCMAIL->config->all();
+    $MAIL_MIME = $params['message'];
+    /* this is abuse ... */
+    $message_charset = $MAIL_MIME->getParam('html_charset');
+    $txt_headers = $MAIL_MIME->txtHeaders();
+    if (isset($config['use_base64']) and $config['use_base64']) {
+      $MAIL_MIME->setParam('html_encoding', 'base64');
+      $MAIL_MIME->setParam('head_encoding', 'base64');
+      if ($MAIL_MIME->getParam('text_encoding') == 'quoted-printable') {
+        $MAIL_MIME->setParam('text_encoding', 'base64');
+      }
+    }
+    if (strtolower($message_charset)  == 'iso-2022-jp') {
+      $MAIL_MIME->setParam('head_encoding', 'base64');
+      $MAIL_MIME->setParam('text_encoding', '7bit');
+      if (preg_match('/format=flowed/', $MAIL_MIME->getParam('text_charset'))){
+        $MAIL_MIME->setParam('text_charset', "ISO-2022-JP;\r\n format=flowed");
+      }
+      else {
+        $MAIL_MIME->setParam('text_charset', "ISO-2022-JP");
+      }
+    }
+    return $params;
   }
 
   /**

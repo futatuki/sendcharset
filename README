@@ -10,7 +10,7 @@ The option specifies which charset to be used in sending message.
 * Installation
 Put this plugin as plugins/sendcharset, then edit config/main.inc.php:
 
- $rcmail_config['plugins'] = array('sendcharset');
+ $config['plugins'] = array('sendcharset');
 
 
 * Configuration
