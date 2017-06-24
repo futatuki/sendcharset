@@ -13,6 +13,7 @@ class sendcharset extends rcube_plugin
     $this->add_hook('preferences_save', array($this, 'save'));
     $this->add_hook('template_object_composebody', array($this, 'append'));
     $this->add_hook('message_ready', array($this, 'tweak_encoding'));
+    $this->add_texts('localization/', true);
   }
 
   /**
@@ -29,7 +30,7 @@ class sendcharset extends rcube_plugin
 						       'id'=>$field_id,
 						       'selected'=>$selected));
       $attrib['blocks']['main']['options']['sendcharset'] =
-	array( 'title'=>html::label($field_id, $this->gettext(rcube_label('charset'))),
+	array( 'title'=> $this->gettext('sendcharset'),
 	       'content'=>$input);
 
       // add checkbox for use_base64
