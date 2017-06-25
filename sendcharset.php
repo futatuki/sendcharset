@@ -36,7 +36,7 @@ class sendcharset extends rcube_plugin
       // add checkbox for use_base64
       $field_id = 'rcmfd_use_base64';
       $checkbox = new html_checkbox(array('name' => '_use_base64', 'id' => $field_id, 'value' => 1));
-      $attrib['blocks']['main']['options']['use_base64'] = array(
+      $attrib['blocks']['advanced']['options']['use_base64'] = array(
 		'title'   => $this->gettext('usebase64'),
 		'content' => $checkbox->show(intval($rcmail->config->get('use_base64', false)))
       );
