@@ -5,6 +5,11 @@ Roundcube plugin for customize character encoding of sending message.
 * Overview
 This plugin adds a option to mail composing preference.
 The option specifies which charset to be used in sending message.
+If you specifies charset ISO-2022-*, B encoding is used for header and
+transfer-encding is set to 7bit automatically.
+For other charset, if 'use_base64' option is set, use Base64 encoding
+for MIME instead of quoted-printable.
+(requires roundcubemail >= 1.2.0)
 
 
 * Installation
