@@ -10,5 +10,4 @@
 
 $labels = array();
 $labels['sendcharset'] = 'Charset for message to send';
-$labels['usebase64'] = 'Use base64 encoding for MIME';
 ?>

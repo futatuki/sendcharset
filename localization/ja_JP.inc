@@ -9,5 +9,4 @@
 */
 
 $labels['sendcharset'] = '送信に使用する文字セット';
-$labels['usebase64'] = 'MIMEのエンコーディングにBase64を使用';
 ?>

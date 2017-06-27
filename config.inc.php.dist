@@ -4,4 +4,3 @@
 // --------------------
 
 //$config['sendcharset'] = 'ISO-2022-JP';
-//$config['use_base64'] = true;
