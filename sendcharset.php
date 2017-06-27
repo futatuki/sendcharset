@@ -5,15 +5,22 @@
  */
 class sendcharset extends rcube_plugin
 {
+  public $task = 'mail|settings';
+  private $rc;
 
   function init()
   {
+    $this->rc = rcmail::get_instance();
     $this->load_config();
-    $this->add_hook('preferences_list', array($this, 'show_option'));
-    $this->add_hook('preferences_save', array($this, 'save'));
-    $this->add_hook('template_object_composebody', array($this, 'append'));
-    $this->add_hook('message_ready', array($this, 'tweak_encoding'));
-    $this->add_texts('localization/', true);
+
+    if ($this->rc->task == 'settings') {
+      $this->add_hook('preferences_list', array($this, 'show_option'));
+      $this->add_hook('preferences_save', array($this, 'save'));
+    }
+    else { /* if ($this->rc->task == 'mail') */
+      $this->add_hook('template_object_composebody', array($this, 'append'));
+      $this->add_hook('message_ready', array($this, 'tweak_encoding'));
+    }
   }
 
   /**
@@ -21,24 +28,29 @@ class sendcharset extends rcube_plugin
    */
   function show_option($attrib)
   {
-    $rcmail = rcmail::get_instance();
+    if ($attrib['section'] != 'compose') {
+      return $attrib;
+    }
+    $dont_override = $this->rc->config->get('dont_override', array());
+    $this->add_texts('localization/', true);
 
-    if ($attrib['section'] == 'compose') {
+    if (!in_array('sendcharset', $dont_override)) {
       $field_id = 'rcmfd_sendcharset';
       $selected = $this->get_charset();
-      $input = $rcmail->output->charset_selector(array('name'=>'_sendcharset',
+      $input = $this->rc->output->charset_selector(array('name'=>'_sendcharset',
 						       'id'=>$field_id,
 						       'selected'=>$selected));
       $attrib['blocks']['main']['options']['sendcharset'] =
-	array( 'title'=> $this->gettext('sendcharset'),
+	array( 'title'=> html::label($field_id, $this->gettext('sendcharset')),
 	       'content'=>$input);
-
+    }
+    if (!in_array('use_base64', $dont_override)) {
       // add checkbox for use_base64
       $field_id = 'rcmfd_use_base64';
       $checkbox = new html_checkbox(array('name' => '_use_base64', 'id' => $field_id, 'value' => 1));
       $attrib['blocks']['advanced']['options']['use_base64'] = array(
-		'title'   => $this->gettext('usebase64'),
-		'content' => $checkbox->show(intval($rcmail->config->get('use_base64', false)))
+		'title'   => html::label($field_id, $this->gettext('usebase64')),
+		'content' => $checkbox->show(intval($this->rc->config->get('use_base64', false)))
       );
     }
     return $attrib;
@@ -48,11 +60,17 @@ class sendcharset extends rcube_plugin
    * Save preference option "sendcharset".
    */
   function save($attrib) {
-    if ($attrib['section'] == 'compose') {
+    if ($attrib['section'] != 'compose') {
+      return $attrib;
+    }
+    $dont_override = $this->rc->config->get('dont_override', array());
+    if (!in_array('sendcharset', $dont_override)) {
       if (isset($_POST['_sendcharset'])) {
 	$attrib['prefs']['sendcharset'] =
 	  get_input_value('_sendcharset', RCUBE_INPUT_POST);
       }
+    }
+    if (!in_array('use_base64', $dont_override)) {
       $attrib['prefs']['use_base64'] = rcube_utils::get_input_value('_use_base64', rcube_utils::INPUT_POST) ? true : false;
     }
     return $attrib;
@@ -73,12 +91,10 @@ class sendcharset extends rcube_plugin
    */
   function tweak_encoding($params)
   {
-    $rcmail = rcmail::get_instance();
-    $config = $rcmail->config->all();
+    $config = $this->rc->config->all();
     $MAIL_MIME = $params['message'];
     /* this is abuse ... */
     $message_charset = $MAIL_MIME->getParam('html_charset');
-    $txt_headers = $MAIL_MIME->txtHeaders();
     if (isset($config['use_base64']) and $config['use_base64']) {
       $MAIL_MIME->setParam('html_encoding', 'base64');
       $MAIL_MIME->setParam('head_encoding', 'base64');
@@ -105,8 +121,7 @@ class sendcharset extends rcube_plugin
    */
   private function get_charset() {
     global $OUTPUT;
-    $rcmail = rcmail::get_instance();
-    $config = $rcmail->config->all();
+    $config = $this->rc->config->all();
 
     return isset($config['sendcharset']) ?
       $config['sendcharset'] : $OUTPUT->get_charset();
