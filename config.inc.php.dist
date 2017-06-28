@@ -3,5 +3,18 @@
 // Sendcharset Plugin options
 // --------------------
 
+// Charset to use for outgoing message. (system default: UTF-8) 
+//
 //$config['sendcharset'] = 'ISO-2022-JP';
+
+// Use Base64 encoding for MIME for non 7bit encodings.
+//   ture  ... use Base64 encoding to body if MIME encoding is needed, and
+//             use B encoding to headers.
+//   false ... (system default) use quoted printable to body if MIME encoding
+//             is needed, and use Q encoding to headers.
+// In any case, for ISO-2022-*, use B encoding for headers and set transfer-
+// encoding to 7bit.
+//
 //$config['use_base64'] = true;
+
+?>

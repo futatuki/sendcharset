@@ -9,16 +9,34 @@ If you specifies charset ISO-2022-*, B encoding is used for header and
 transfer-encding is set to 7bit automatically.
 For other charset, if 'use_base64' option is set, use Base64 encoding
 for MIME instead of quoted-printable.
-(requires roundcubemail >= 1.2.0)
+
+This plugin requires roundcubemail >= 1.2.0
 
 
 * Installation
-Put this plugin as plugins/sendcharset, then edit config/main.inc.php:
+Put this plugin as plugins/sendcharset, then edit config.inc.php
+in roundcube config directory:
 
  $config['plugins'] = array('sendcharset');
 
 
 * Configuration
 Copy config.inc.php.dist to config.inc.php and edit that.
-There is only a option which specifies default sending charset.
-If it is not set, keeps default behavior(UTF-8 may be used).
+There are options which specifies default sending charset and encoding
+If $config['sendcharset'] is not set, keeps default behavior
+(UTF-8 may be used).
+
+For users, each user can these options by prerefences menu,
+    preferences> message composition>
+        main option> Charset for message to send
+for sendcharset option, and
+    preferences> message composition>
+        advanced option> Use base64 encoding for MIME
+for use_base64 option.
+
+If you don't want to show users these options, set its option name
+into $config['dont_override'] option array, like
+
+   $config['dont_override'][] = 'sendcharset';
+   $config['dont_override'][] = 'use_base64';
+
