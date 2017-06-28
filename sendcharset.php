@@ -17,8 +17,11 @@ class sendcharset extends rcube_plugin
       $this->add_hook('preferences_list', array($this, 'show_option'));
       $this->add_hook('preferences_save', array($this, 'save'));
     }
-    else { /* if ($this->rc->task == 'mail') */
+    else if ($this->rc->action == 'compose') {
+      /* ($this->rc->task == 'mail') */
       $this->add_hook('template_object_composebody', array($this, 'append'));
+    }
+    else if ($this->rc->action == 'send') {
       $this->add_hook('message_ready', array($this, 'tweak_encoding'));
     }
   }
@@ -71,7 +74,7 @@ class sendcharset extends rcube_plugin
       }
     }
     if (!in_array('use_base64', $dont_override)) {
-      $attrib['prefs']['use_base64'] = rcube_utils::get_input_value('_use_base64', rcube_utils::INPUT_POST) ? true : false;
+      $attrib['prefs']['use_base64'] = (bool) rcube_utils::get_input_value('_use_base64', rcube_utils::INPUT_POST);
     }
     return $attrib;
   }
@@ -127,3 +130,4 @@ class sendcharset extends rcube_plugin
       $config['sendcharset'] : $OUTPUT->get_charset();
   }
 }
+?>
