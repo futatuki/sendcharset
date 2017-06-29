@@ -70,7 +70,7 @@ class sendcharset extends rcube_plugin
     if (!in_array('sendcharset', $dont_override)) {
       if (isset($_POST['_sendcharset'])) {
 	$attrib['prefs']['sendcharset'] =
-	  get_input_value('_sendcharset', RCUBE_INPUT_POST);
+	  rcube_utils::get_input_value('_sendcharset', RCUBE_INPUT_POST);
       }
     }
     if (!in_array('use_base64', $dont_override)) {
@@ -94,17 +94,9 @@ class sendcharset extends rcube_plugin
    */
   function tweak_encoding($params)
   {
-    $config = $this->rc->config->all();
     $MAIL_MIME = $params['message'];
     /* this is abuse ... */
     $message_charset = $MAIL_MIME->getParam('html_charset');
-    if (isset($config['use_base64']) and $config['use_base64']) {
-      $MAIL_MIME->setParam('html_encoding', 'base64');
-      $MAIL_MIME->setParam('head_encoding', 'base64');
-      if ($MAIL_MIME->getParam('text_encoding') == 'quoted-printable') {
-	$MAIL_MIME->setParam('text_encoding', 'base64');
-      }
-    }
     if (preg_match('/iso-2022/i', $message_charset)) {
       $MAIL_MIME->setParam('head_encoding', 'base64');
       $MAIL_MIME->setParam('text_encoding', '7bit');
@@ -113,6 +105,14 @@ class sendcharset extends rcube_plugin
       }
       else {
 	$MAIL_MIME->setParam('text_charset', $message_charset);
+      }
+    }
+    else if (   ! preg_match('/iso-8859/i', $message_charset)
+            and $this->rc->config->get('use_base64', false)) {
+      $MAIL_MIME->setParam('html_encoding', 'base64');
+      $MAIL_MIME->setParam('head_encoding', 'base64');
+      if ($MAIL_MIME->getParam('text_encoding') == 'quoted-printable') {
+	$MAIL_MIME->setParam('text_encoding', 'base64');
       }
     }
     return $params;
@@ -124,10 +124,8 @@ class sendcharset extends rcube_plugin
    */
   private function get_charset() {
     global $OUTPUT;
-    $config = $this->rc->config->all();
 
-    return isset($config['sendcharset']) ?
-      $config['sendcharset'] : $OUTPUT->get_charset();
+    return $this->rc->config->get('sendcharset', $OUTPUT->get_charset());
   }
 }
 ?>
