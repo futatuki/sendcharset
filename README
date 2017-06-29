@@ -10,8 +10,9 @@ transfer-encding is set to 7bit automatically.
 For other charset, if 'use_base64' option is set, use Base64 encoding
 for MIME instead of quoted-printable.
 
-This plugin requires roundcubemail >= 1.2.0
-
+This plugin requires roundcubemail >= 1.2.0 (*)
+((*) As handling of ISO-2022-* encoding has fixed 1.4.x before beta,
+so some part of the code in this plugin is somewhat redundant for after that.)
 
 * Installation
 Put this plugin as plugins/sendcharset, then edit config.inc.php
