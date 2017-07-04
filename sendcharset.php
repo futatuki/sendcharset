@@ -109,8 +109,12 @@ class sendcharset extends rcube_plugin
     }
     else if (   ! preg_match('/iso-8859/i', $message_charset)
             and $this->rc->config->get('use_base64', false)) {
-      $MAIL_MIME->setParam('html_encoding', 'base64');
-      $MAIL_MIME->setParam('head_encoding', 'base64');
+      if ($MAIL_MIME->getParam('html_encoding') == 'quoted-printable') {
+        $MAIL_MIME->setParam('html_encoding', 'base64');
+      }
+      if ($MAIL_MIME->getParam('head_encoding') == 'quoted-printable') {
+        $MAIL_MIME->setParam('head_encoding', 'base64');
+      }
       if ($MAIL_MIME->getParam('text_encoding') == 'quoted-printable') {
 	$MAIL_MIME->setParam('text_encoding', 'base64');
       }
