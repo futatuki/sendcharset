@@ -97,20 +97,15 @@ class sendcharset extends rcube_plugin
     $MAIL_MIME = $params['message'];
     /* this is abuse ... */
     $message_charset = $MAIL_MIME->getParam('html_charset');
-    if (preg_match('/iso-2022/i', $message_charset)) {
-      $MAIL_MIME->setParam('head_encoding', 'base64');
-      $MAIL_MIME->setParam('text_encoding', '7bit');
-      if (preg_match('/format=flowed/', $MAIL_MIME->getParam('text_charset'))){
-	$MAIL_MIME->setParam('text_charset', $message_charset . ";\r\n format=flowed");
-      }
-      else {
-	$MAIL_MIME->setParam('text_charset', $message_charset);
-      }
-    }
-    else if (   ! preg_match('/iso-8859/i', $message_charset)
+    /* if charset is iso-8859-*, then stay quoted-printable */
+    if (   ! preg_match('/iso-8859/i', $message_charset)
             and $this->rc->config->get('use_base64', false)) {
-      $MAIL_MIME->setParam('html_encoding', 'base64');
-      $MAIL_MIME->setParam('head_encoding', 'base64');
+      if ($MAIL_MIME->getParam('html_encoding') == 'quoted-printable') {
+        $MAIL_MIME->setParam('html_encoding', 'base64');
+      }
+      if ($MAIL_MIME->getParam('head_encoding') == 'quoted-printable') {
+        $MAIL_MIME->setParam('head_encoding', 'base64');
+      }
       if ($MAIL_MIME->getParam('text_encoding') == 'quoted-printable') {
 	$MAIL_MIME->setParam('text_encoding', 'base64');
       }

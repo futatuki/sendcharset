@@ -7,12 +7,22 @@ This plugin adds a option to mail composing preference.
 The option specifies which charset to be used in sending message.
 If you specifies charset ISO-2022-*, B encoding is used for header and
 transfer-encding is set to 7bit automatically.
-For other charset, if 'use_base64' option is set, use Base64 encoding
-for MIME instead of quoted-printable.
+If you specifies charset ISO-8859-*, Q encoding is used for header and
+use Base64 encoding for MIME
+For other charset, if 'use_base64' option is set, use B encoding for header
+and use Base64 encoding for MIME instead of quoted-printable.
 
 This plugin requires roundcubemail >= 1.2.0 (*)
-((*) As handling of ISO-2022-* encoding has fixed 1.4.x before beta,
-so some part of the code in this plugin is somewhat redundant for after that.)
+
+(*) Handling of ISO-2022-* encoding on roundcubemail had been broken (#5640)
+since fixed on master branch commit 402a4634488903d9ea13fac988b3c7fcd4ec7c0d
+(Jun 29 2017), but this plugin of this branch don't fix it.
+For roundcubemail before it fixed, please use the plugin of another branch
+with code to fix it, or apply change on
+https://github.com/roundcube/roundcubemail.git ,
+commit 6f87a320528f21f5804620dfa74e8ce7c2dafb63 and
+commit 402a4634488903d9ea13fac988b3c7fcd4ec7c0d
+against program/steps/mail/sendmail.inc .
 
 * Installation
 Put this plugin as plugins/sendcharset, then edit config.inc.php
