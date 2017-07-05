@@ -1,0 +1,29 @@
+{
+    "name": "futatuki/sendcharset",
+    "type": "roundcube-plugin",
+    "description": "Customize charset and encoding of outgoing messages",
+    "license": "MIT",
+    "version": "0.1.0",
+    "homepage": "https://github.com/futatuki/sendcharset/tree/transfer-encodings-support",
+    "authors": [
+        {
+            "name": "joniburn",
+            "email": "joniburn@gmail.com",
+            "role": "Original Author"
+        },
+        {
+            "name": "FUTATSUKI Yasuhito",
+            "email": "futatuki@yf.bsdclub.org",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.7",
+        "roundcube/plugin-installer": "~0.1.6"
+    },
+    "extra": {
+        "roundcube": {
+            "min-version": "1.2.0"
+        }
+    }
+}
