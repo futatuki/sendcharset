@@ -3,7 +3,7 @@ Roundcube plugin for customize character encoding of sending message.
 ---------------------------------------------------------------------------
 
 * Overview
-This plugin adds a option to mail composing preference.
+This plugin adds options to mail composing preference.
 The option specifies which charset to be used in sending message.
 If you specifies charset ISO-2022-*, B encoding is used for header and
 transfer-encding is set to 7bit automatically.
@@ -16,6 +16,7 @@ This plugin requires roundcubemail >= 1.2.0 (*)
 ((*) As handling of ISO-2022-* encoding on roundcubemail has been fixed
 1.4.x before beta, some part of the code in this plugin is somewhat
 redundant for after that.)
+
 
 * Installation
 Put this plugin as plugins/sendcharset, then edit config.inc.php
@@ -41,6 +42,18 @@ for use_base64 option.
 If you don't want to show users these options, set its option name
 into $config['dont_override'] option array, like
 
-   $config['dont_override'][] = 'sendcharset';
-   $config['dont_override'][] = 'use_base64';
+    $config['dont_override'][] = 'sendcharset';
+    $config['dont_override'][] = 'use_base64';
+
+It also can allow users to select charset in composition screen if
+users use larry or classic skin(**). To enable this feature, set
+$config['use_sendcharset_selector'] parameter to True in config.inc.php like,
+
+    $config['use_sendcharset_selector'] = True;
+
+(**)As charset selector in message composition screen depends deeply upon
+skin template format, it may not work if skins are changed. If you set
+this option 'True' and charset selector parts does not appear in message
+composition screen in larry or classic skin, please turn off (set to 'False')
+this option. (if not, outgoing mesages use always UTF-8 (or ASCII))
 

@@ -3,9 +3,14 @@
 // Sendcharset Plugin options
 // --------------------
 
-// Charset to use for outgoing message. (system default: UTF-8) 
+// default charset to use for outgoing message. (system default: UTF-8)
 //
 //$config['sendcharset'] = 'ISO-2022-JP';
+
+// Use charset selector in message composition screen
+// (only for larry and classic skin)
+//
+//$config['use_sendcharset_selecter'] = True;
 
 // Use Base64 encoding for MIME for non 7bit encodings.
 //   ture  ... use Base64 encoding to body if MIME encoding is needed, and
