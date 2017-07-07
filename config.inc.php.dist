@@ -3,4 +3,13 @@
 // Sendcharset Plugin options
 // --------------------
 
+// default charset to use for outgoing message. (system default: UTF-8)
+//
 //$config['sendcharset'] = 'ISO-2022-JP';
+
+// Use charset selector in message composition screen
+// (only for larry and classic skin)
+//
+//$config['use_sendcharset_selecter'] = True;
+
+?>

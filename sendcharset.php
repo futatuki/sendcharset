@@ -12,13 +12,31 @@ class sendcharset extends rcube_plugin
   {
     $this->rc = rcmail::get_instance();
     $this->load_config();
+    $dont_override = $this->rc->config->get('dont_override', array());
 
     if ($this->rc->task == 'settings') {
       $this->add_hook('preferences_list', array($this, 'show_option'));
       $this->add_hook('preferences_save', array($this, 'save'));
     }
-    else { /* if ($this->rc->task == 'mail') */
-      $this->add_hook('template_object_composebody', array($this, 'append'));
+    else if ($this->rc->action == 'compose') {
+      /* ($this->rc->task == 'mail') */
+      if (   ! $this->rc->config->get('use_sendcharset_selector', False)
+          or in_array('sendcharset', $dont_override)) {
+        $this->add_hook('template_object_composebody', array($this, 'append'));
+      }
+      else {
+        if ($this->rc->config->get('skin') == 'larry') {
+          $this->add_hook('template_container', array($this, 'add_selector'));
+        }
+        else if ($this->rc->config->get('skin') == 'classic') {
+          $this->add_hook('render_page',
+                  array($this, 'insert_selector_classic'));
+        }
+        else {
+          $this->add_hook('template_object_composebody',
+                  array($this, 'append'));
+        }
+      }
     }
   }
 
@@ -60,6 +78,64 @@ class sendcharset extends rcube_plugin
 	  get_input_value('_sendcharset', RCUBE_INPUT_POST);
       }
     }
+    return $attrib;
+  }
+
+  /**
+   * Add charset selector in composeoptions template container
+   * (currently, 'larry' skin only)
+   */
+  function add_selector($attrib)
+  {
+    if ($attrib['name'] != 'composeoptions') {
+        return $attrib;
+    }
+    $this->add_texts('localization/', true);
+
+    $larry_template =
+"        <span class=\"composeoption\">
+                <label>%s %s</label>
+        </span>
+";
+    $label    =  html::label($field_id, $this->gettext('sendcharset'));
+    $field_id = 'rcmcomposecharset';
+    $selected = $this->get_charset();
+    $input = $this->rc->output->charset_selector(array(
+        'name'     => '_charset',
+        'id'       => $field_id,
+        'selected' => $selected
+    ));
+    $attrib['content'] .= sprintf($larry_template, $label, $input);
+    return $attrib;
+  }
+
+  /**
+   * insert charset selector classic 'compose' page
+   */
+  function insert_selector_classic($attrib)
+  {
+    if ($attrib['template'] != 'compose') {
+      return $attrib;
+    }
+    $this->add_texts('localization/', true);
+
+    $classic_template = '${1}
+        <tr>
+        <td><label for="rcmcomposecharset">%s:</label></td>
+        <td>%s</td>
+    </tr>${2}';
+
+    $label    =  $this->gettext('sendcharset');
+    $field_id = 'rcmcomposecharset';
+    $selected = $this->get_charset();
+    $input = $this->rc->output->charset_selector(array(
+        'name'     => '_charset',
+        'id'       => $field_id,
+        'selected' => $selected
+    ));
+    $attrib['content'] = preg_replace(
+        '((<div\s+id\s*=\s*"composeoptionsmenu"[\s\S]+\S)(\s*</table>\s*</div>))Umi',
+        sprintf($classic_template, $label, $input), $attrib['content']);
     return $attrib;
   }
 

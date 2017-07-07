@@ -3,8 +3,9 @@ Roundcube plugin for customize character encoding of sending message.
 ---------------------------------------------------------------------------
 
 * Overview
-This plugin adds a option to mail composing preference.
+This plugin adds options to mail composing preference.
 The option specifies which charset to be used in sending message.
+
 
 
 * Installation
@@ -15,5 +16,28 @@ Put this plugin as plugins/sendcharset, then edit config/main.inc.php:
 
 * Configuration
 Copy config.inc.php.dist to config.inc.php and edit that.
-There is only a option which specifies default sending charset.
-If it is not set, keeps default behavior(UTF-8 may be used).
+There are options which specifies default sending charset and encoding
+If $config['sendcharset'] is not set, keeps default behavior
+(UTF-8 may be used).
+
+For users, each user can these options by prerefences menu,
+    preferences> message composition>
+        main option> Charset for message to send
+
+If you don't want to show users these options, set its option name
+into $config['dont_override'] option array, like
+
+    $config['dont_override'][] = 'sendcharset';
+
+It also can allow users to select charset in composition screen if
+users use larry or classic skin(**). To enable this feature, set
+$config['use_sendcharset_selector'] parameter to True in config.inc.php like,
+
+    $config['use_sendcharset_selector'] = True;
+
+(**)As charset selector in message composition screen depends deeply upon
+skin template format, it may not work if skins are changed. If you set
+this option 'True' and charset selector parts does not appear in message
+composition screen in larry or classic skin, please turn off (set to 'False')
+this option. (if not, outgoing mesages use always UTF-8 (or ASCII))
+
