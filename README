@@ -18,7 +18,8 @@ This plugin requires roundcubemail >= 1.2.0 (*)
 since fixed on master branch commit 402a4634488903d9ea13fac988b3c7fcd4ec7c0d
 (Jun 29 2017), but this plugin of this branch don't fix it.
 For roundcubemail before it fixed, please use the plugin of another branch
-with code to fix it, or apply change on
+(https://github.com/futatuki/sendcharset/tree/iso-2022-encoding-fix),
+or apply change on
 https://github.com/roundcube/roundcubemail.git ,
 commit 6f87a320528f21f5804620dfa74e8ce7c2dafb63 and
 commit 402a4634488903d9ea13fac988b3c7fcd4ec7c0d
@@ -60,7 +61,7 @@ $config['use_sendcharset_selector'] parameter to True in config.inc.php like,
 
 (**)As charset selector in message composition screen depends deeply upon
 skin template format, it may not work if skins are changed. If you set
-this option 'True' and charset selector parts does not appear in message
+this option 'True' and charset selector does not appear in message
 composition screen in larry or classic skin, please turn off (set to 'False')
 this option. (if not, outgoing mesages use always UTF-8 (or ASCII))
 
